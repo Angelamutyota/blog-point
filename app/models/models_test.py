@@ -1,5 +1,6 @@
 import unittest
 import quote
+
 Quote = quote.Quote
 
 class QuoteTest(unittest.TestCase):
