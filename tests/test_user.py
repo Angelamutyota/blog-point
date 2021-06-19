@@ -15,3 +15,5 @@ class UserModelTest(unittest.TestCase):
 
     def test_password_verification(self):
         self.assertTrue(self.new_user.verify_password('banana'))
+    
+    
