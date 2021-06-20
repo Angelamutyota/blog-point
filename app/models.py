@@ -26,7 +26,7 @@ class User(UserMixin, db.Model):
     email  = db.Column(db.String(255),unique = True,nullable = False)
     secure_password = db.Column(db.String(255))
     bio = db.Column(db.String(255))
-    pic_path = db.Column(db.String())
+    profile_pic_path = db.Column(db.String())
     blogs = db.relationship('Blog', backref='user', lazy='dynamic')
     comments = db.relationship('Comment', backref='user', lazy='dynamic')
 
@@ -79,6 +79,7 @@ class Comment(db.Model):
     comment = db.Column(db.Text(),nullable = False)
     posted = db.Column(db.DateTime,default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    blog_id = db.Column(db.Integer,db.ForeignKey("blogs.id"))
 
     def save_comment(self):
         db.session.add(self)
@@ -87,6 +88,11 @@ class Comment(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    @classmethod
+    def get_comments(cls,id):
+        comments = Comment.query.filter_by(blog_id=id).all()
+        return comments
 
     def __repr__(self):
         return f'Comment {self.comment}'
