@@ -75,6 +75,40 @@ def upload_blog(uname):
         return redirect(url_for('main.index'))
     return render_template('new_blog.html', form = form)
 
+@main.route('/<int:blog_id>/delete',methods=['POST','GET'])
+@login_required
+def delete_blog(blog_id):
+    blog=Blog.query.get(blog_id)
+    if blog.user_id != current_user.id:
+        abort(403)
+    
+    db.session.delete(blog)
+    db.session.commit()
+
+    return redirect(url_for('main.profile',uname=current_user.username))
+
+
+@main.route('/<int:blog_id>/update',methods=['GET','POST'])
+@login_required
+def update_blog(blog_id):
+    form=UploadBlogForm()
+    blog=Blog.query.get(blog_id)
+    if blog.user_id != current_user.id:
+        abort(403)
+    if form.validate_on_submit():
+        blog.title=form.title.data
+        blog.blog=form.blog.data
+        db.session.commit()
+        flash('Successfully Updated!')
+        return redirect(url_for('main.profile',uname=current_user.username))
+    elif request.method=='GET':
+        form.title.data=blog.title
+        form.blog.data=blog.blog
+
+    return render_template('update_blog.html',form=form,legend="Update Blog")
+
+
+
 
 
 
