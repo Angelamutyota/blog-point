@@ -4,7 +4,7 @@ from flask import render_template,request,redirect,url_for,abort, flash
 from flask_login import login_required, current_user
 from ..models import User, Blog, Comment
 from .. import db,photos
-from .forms import UpdateProfile, UploadBlogForm
+from .forms import UpdateProfile, UploadBlogForm, CommentsForm
 
 
 
@@ -15,7 +15,9 @@ def index():
     View root page function that returns the index page and its data
     '''
     quotes = get_quotes()
-    return render_template('index.html', quotes= quotes)
+    blog = Blog.query.filter_by().all()
+
+    return render_template('index.html', quotes= quotes,blog=blog)
 
 @main.route('/user/<uname>')
 def profile(uname):
@@ -107,8 +109,20 @@ def update_blog(blog_id):
 
     return render_template('update_blog.html',form=form,legend="Update Blog")
 
-
-
+@main.route("/comment/<int:blog_id>",methods=["POST","GET"])
+@login_required
+def comment_blog(blog_id):
+    form = CommentsForm()
+    blog = Blog.query.get(blog_id)
+    all_comments = Comment.get_comments(blog_id)
+    if form.validate_on_submit():
+        new_comment = form.comment.data
+        blog_id = blog_id
+        user_id = current_user._get_current_object().id
+        comment_object = Comment(comment=new_comment,user_id=user_id,blog_id=blog_id)
+        comment_object.save_comment()
+        return redirect(url_for(".comment_blog",blog_id=blog_id))
+    return render_template("comments.html",comment_form=form,blog=blog,all_comments=all_comments)
 
 
 
