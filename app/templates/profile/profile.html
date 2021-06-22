@@ -38,8 +38,11 @@
         <input type="file"  name="photo" class="form-control" required>
         <input type="submit">
       </form>
-
+      {{macro.displayUserBlogs(blogs)}}
+      {% endif %}
+   </div>
+ 
     </div>
-    {% endif %}
+
 
 {% endblock %}
