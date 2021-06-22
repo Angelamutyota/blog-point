@@ -1,4 +1,4 @@
-# News_API
+# Blog-Point
 
 ## Author
 
